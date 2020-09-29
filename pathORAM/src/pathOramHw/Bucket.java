@@ -7,20 +7,27 @@ import javax.management.RuntimeErrorException;
 /*
  * Name: TODO
  * StudentID: TODO
- */
+*/
 
 public class Bucket{
 	private static boolean is_init = false;
 	private static int max_size_Z = -1;
+
+	private ArrayList<Block> blocks_of_bucket;
+	private int current_size_of_bucket_Z;
 	
-	//TODO Add necessary variables
-	
-	Bucket(){
+	Bucket()
+	{
 		if(is_init == false)
 		{
 			throw new RuntimeException("Please set bucket size before creating a bucket");
 		}
-		//TODO Must complete this method for submission
+		current_size_of_bucket_Z = 0;
+		blocks_of_bucket = new ArrayList<Block>(max_size_Z);
+		for(int i=0; i<max_size_Z; i++)
+		{
+			blocks_of_bucket.add(new Block()); // malloc blocks to bucket
+		}
 	}
 	
 	// Copy constructor
@@ -30,40 +37,68 @@ public class Bucket{
 		{
 			throw new RuntimeException("the other bucket is not malloced.");
 		}
-		//TODO Must complete this method for submission
+		blocks_of_bucket = new ArrayList<Block>(max_size_Z);
+		for(int i=0; i<other.getBlocks().size(); i++)
+		{
+			blocks_of_bucket.add(new Block(other.getBlocks().get(i)));
+		}
+
 	}
-	
-	//Implement and add your own methods.
-	Block getBlockByKey(int key){
-		// TODO Must complete this method for submission
+
+
+	Block getBlockByKey(int key) // returns the block where the index == key
+	{
+		for(int i=0; i<blocks_of_bucket.size(); i++)
+		{
+			if(blocks_of_bucket.get(i).index == key)
+			{
+				return blocks_of_bucket.get(i);
+			}
+		}
 		return null;
 	}
-	
-	void addBlock(Block new_blk){
-		// TODO Must complete this method for submission
+
+
+	void addBlock(Block new_blk)
+	{
+		current_size_of_bucket_Z++;
+		blocks_of_bucket.add(new_blk);
 	}
-	
+
+
 	boolean removeBlock(Block rm_blk)
 	{
-		// TODO Must complete this method for submission
+		for(int i=0; i<blocks_of_bucket.size(); i++)
+		{
+			if(blocks_of_bucket.get(i).index == rm_blk.index)
+			{
+				current_size_of_bucket_Z--;
+				blocks_of_bucket.remove(i);
+				blocks_of_bucket.add(new Block()); // replace the one removed with a empty block
+				return true;
+			}
+		}
 		return false;
 	}
 	
 	
-	ArrayList<Block> getBlocks(){
-		// TODO Must complete this method for submission
-		return null;
+	ArrayList<Block> getBlocks()
+	{
+		return blocks_of_bucket;
 	}
-	
-	int returnRealSize(){
-		// TODO Must complete this method for submission
-		return 0;
+
+
+	int returnRealSize()
+	{
+		return current_size_of_bucket_Z;
 	}
+
 
 	static void resetState()
 	{
 		is_init = false;
 	}
+
 
 	static void setMaxSize(int maximumSize)
 	{
