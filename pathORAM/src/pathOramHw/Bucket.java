@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import javax.management.RuntimeErrorException;
 
 /*
- * Name: TODO
- * StudentID: TODO
-*/
+Sudharshan Swaminathan UT-s2378809
+Vasanth Subramanian UT-s2493055
+ */
 
 public class Bucket{
 	private static boolean is_init = false;
 	private static int max_size_Z = -1;
 
 	private ArrayList<Block> blocks_of_bucket;
-	protected int current_size_of_bucket_Z;
+	private int current_size_of_bucket_Z;
 	
 	Bucket()
 	{

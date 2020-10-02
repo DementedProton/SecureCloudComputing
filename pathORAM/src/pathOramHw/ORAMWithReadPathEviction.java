@@ -3,8 +3,8 @@ package pathOramHw;
 import java.util.ArrayList;
 
 /*
- * Name: TODO
- * NetID: TODO
+Sudharshan Swaminathan UT-s2378809
+Vasanth Subramanian UT-s2493055
  */
 
 public class ORAMWithReadPathEviction implements ORAMInterface{
@@ -47,17 +47,14 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 	{
 		int x = position_map[blockIndex];
 		position_map[blockIndex] = randForORAMInterface.getRandomLeaf();
-
 		for(int i=0; i<=height_of_tree_L; i++)
 		{
 			Bucket temporary_bucket = untrustedStorageInterface.ReadBucket(P(x, i));
-			int counter = temporary_bucket.returnRealSize();
-			for(int j=0; j<counter; j++)
+			for(int j=0; j<temporary_bucket.returnRealSize(); j++)
 			{
 				client_stash.add(temporary_bucket.getBlocks().get(j));
 			}
 		}
-
 		byte[] data = null;
 		for(int i=0; i<client_stash.size(); i++)
 		{
@@ -81,7 +78,6 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			temporary_stash1.add(temporary_block);
 			client_stash = temporary_stash1;
 		}
-
 		ArrayList<Block> temporary_stash;
 		for(int i=height_of_tree_L; i>=0; i--)
 		{
@@ -96,7 +92,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			}
 			int a = (int)(Math.min(size_of_bucket_Z, temporary_stash.size()));
 			temporary_stash.removeAll(temporary_stash.subList(a, temporary_stash.size()));
-			client_stash.removeAll(temporary_stash);
+			client_stash.removeAll(temporary_stash); //purge from stash
 			Bucket temporary_bucket = new Bucket();
 			for(int k=0; k<temporary_stash.size(); k++)
 			{
