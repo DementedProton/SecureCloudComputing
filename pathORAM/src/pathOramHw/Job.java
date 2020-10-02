@@ -77,7 +77,7 @@ public class Job {
 				counter += data_collection.get(j);
 			}
 			//writer.println(i + "," + counter);
-            System.out.println(-1 + "," + counter);
+            System.out.println(i + "," + counter);
 		}
 
 
