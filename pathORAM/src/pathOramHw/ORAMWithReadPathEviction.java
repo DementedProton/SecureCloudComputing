@@ -23,24 +23,18 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 	{
 		untrustedStorageInterface = storage;
 		randForORAMInterface = rand_gen;
-
 		size_of_bucket_Z = bucket_size;
 		number_of_data_blocks_N = num_blocks;
 		position_map = new int[number_of_data_blocks_N];
 		height_of_tree_L = (int)(Math.ceil(Math.log(number_of_data_blocks_N)/Math.log(2))); // [log2(N)] = log N / log 2
 		client_stash = new ArrayList<Block>();
-
 		randForORAMInterface.setBound(getNumLeaves());
-
 		for(int i=0; i<position_map.length; i++)
 		{
 			position_map[i] = randForORAMInterface.getRandomLeaf();
 		}
-
 		untrustedStorageInterface.setCapacity(getNumBuckets());
-
 		Bucket temporary_bucket = new Bucket();
-
 		for(int i=0; i< getNumBuckets(); i++)
 		{
 			untrustedStorageInterface.WriteBucket(i, temporary_bucket);

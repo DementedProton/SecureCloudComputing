@@ -14,7 +14,7 @@ public class Bucket{
 	private static int max_size_Z = -1;
 
 	private ArrayList<Block> blocks_of_bucket;
-	protected int current_size_of_bucket_Z; // aaa
+	protected int current_size_of_bucket_Z;
 	
 	Bucket()
 	{

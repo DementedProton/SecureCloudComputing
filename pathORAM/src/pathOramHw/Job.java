@@ -16,7 +16,9 @@ public class Job {
 	public static void main(String[] args) {
 		int bucket_size = 4;
 		int num_blocks = (int) Math.pow(2, 20);
-		ArrayList<Integer> NumberMap = new ArrayList<Integer>();
+		ArrayList<Integer> data_collection = new ArrayList<Integer>();
+
+		PrintWriter writer = new PrintWriter("simulation2.txt", "UTF-8");
 
 		//Set the Bucket size for all the buckets.
 		Bucket.setMaxSize(bucket_size);
@@ -29,9 +31,7 @@ public class Job {
 		
 		//Initialize a new Oram
 		ORAMInterface oram = new ORAMWithReadPathEviction(storage, rand_gen, bucket_size, num_blocks);
-		long startTime = System.currentTimeMillis();
 
-		// ArrayList<Integer> tempy = new ArrayList<Integer>();
 		//Initialize a buffer value
 		byte[] write_bbuf = new byte[128];
 		for(int i = 0; i < 128; i++)
@@ -39,50 +39,44 @@ public class Job {
 			write_bbuf[i] = (byte) 0xa;
 		}
 
-//		Do same sample computation: fill an array with numbers, then read it back.
-//		for(int i = 0; i < 30000; i++){
-//			oram.access(Operation.WRITE, i % num_blocks, write_bbuf);
-//			System.out.println("dbg written block " + i + " has stash size: " + oram.getStashSize());
-//		}
-		
-//		for(int i = 0; i < num_blocks; i++){
-//			System.out.println("dbg read from " + i + " value is :" + Arrays.toString(oram.access(Operation.READ, i, new byte[128])));
-//		}
-
-		for(int i = 0; i < 3000000; i++){
+		// 3 million warm ups
+		for(int i = 0; i < 3000000; i++)
+		{
 			oram.access(Operation.WRITE, i % num_blocks, write_bbuf);
 		}
 
-		for(int i = 0; i < 100000000; i++){
+		// testing accessess by doing writes  - 100 million
+		for(int i = 0; i < 100000000; i++)
+		{
 			oram.access(Operation.WRITE, i % num_blocks, write_bbuf);
-
-			int size = NumberMap.size();
-			int StackSize = oram.getStashSize();
-			if (size <= StackSize){
-				for (int j=size; j<StackSize; j++){
-					NumberMap.add(0);
+			int size_of_data = data_collection.size();
+			int stash_size = oram.getStashSize();
+			if (size_of_data <= stash_size)
+			{
+				for (int j=size_of_data; j<stash_size; j++)
+				{
+					data_collection.add(0);
 				}
-				NumberMap.add(1);
+				data_collection.add(1);
 			}
-			else{
-				NumberMap.set(StackSize, NumberMap.get(StackSize)+1);
+			else
+			{
+				data_collection.set(stash_size, data_collection.get(stash_size)+1);
 			}
 
 		}
 
-		int ASize = NumberMap.size();
-		System.out.println(-1 + "," + 100000000);
-		for (int i=0; i<ASize; i++){
+		int size_of_data = data_collection.size();
+		writer.println(-1 + "," + 100000000);
+		for (int i=0; i<size_of_data; i++)
+		{
 			int counter = 0;
-			for (int j=i+1; j<ASize; j++){
-				counter += NumberMap.get(j);
+			for (int j=i+1; j<size_of_data; j++)
+			{
+				counter += data_collection.get(j);
 			}
-			System.out.println(i + "," + counter);
+			writer.println(i + "," + counter);
 		}
-
-		long endTime = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
-		System.out.println(totalTime);
 
 
 	}
