@@ -22,21 +22,22 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 									int num_blocks)
 	{
 		untrustedStorageInterface = storage;
-		untrustedStorageInterface.setCapacity(getNumBuckets());
-
 		randForORAMInterface = rand_gen;
-		randForORAMInterface.setBound(getNumLeaves());
 
 		size_of_bucket_Z = bucket_size;
 		number_of_data_blocks_N = num_blocks;
 		position_map = new int[number_of_data_blocks_N];
-		height_of_tree_L = (int)(Math.ceil(Math.log(number_of_data_blocks_N)/Math.log(2))); // [log2(N)]
+		height_of_tree_L = (int)(Math.ceil(Math.log(number_of_data_blocks_N)/Math.log(2))); // [log2(N)] = log N / log 2
 		client_stash = new ArrayList<Block>();
+
+		randForORAMInterface.setBound(getNumLeaves());
 
 		for(int i=0; i<position_map.length; i++)
 		{
 			position_map[i] = randForORAMInterface.getRandomLeaf();
 		}
+
+		untrustedStorageInterface.setCapacity(getNumBuckets());
 
 		Bucket temporary_bucket = new Bucket();
 
@@ -56,7 +57,8 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		for(int i=0; i<=height_of_tree_L; i++)
 		{
 			Bucket temporary_bucket = untrustedStorageInterface.ReadBucket(P(x, i));
-			for(int j=0; j<temporary_bucket.returnRealSize(); j++)
+			int counter = temporary_bucket.returnRealSize();
+			for(int j=0; j<counter; j++)
 			{
 				client_stash.add(temporary_bucket.getBlocks().get(j));
 			}
@@ -72,17 +74,18 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		}
 		if(op == Operation.WRITE)
 		{
-			ArrayList<Block> temporary_stash = client_stash;
-			for(int i=0; i<temporary_stash.size(); i++)
+			ArrayList<Block> temporary_stash1;
+			temporary_stash1 = client_stash;
+			for(int i=0; i<temporary_stash1.size(); i++)
 			{
-				if(temporary_stash.get(i).index == blockIndex)
+				if(temporary_stash1.get(i).index == blockIndex)
 				{
-					temporary_stash.remove(i);
+					temporary_stash1.remove(i);
 				}
 			}
 			Block temporary_block = new Block(blockIndex, newdata);
-			temporary_stash.add(temporary_block);
-			client_stash = temporary_stash;
+			temporary_stash1.add(temporary_block);
+			client_stash = temporary_stash1;
 		}
 
 		ArrayList<Block> temporary_stash;
@@ -91,10 +94,10 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			temporary_stash = new ArrayList<Block>();
 			for(int j=0; j<client_stash.size(); j++)
 			{
-				Block temporary_block = client_stash.get(j);
-				if(P(x, i) == P(position_map[temporary_block.index], i))
+				Block temporary_block2 = client_stash.get(j);
+				if(P(x, i) == P(position_map[temporary_block2.index], i))
 				{
-					temporary_stash.add(temporary_block);
+					temporary_stash.add(temporary_block2);
 				}
 			}
 			int a = (int)(Math.min(size_of_bucket_Z, temporary_stash.size()));
@@ -107,7 +110,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			}
 			untrustedStorageInterface.WriteBucket(P(x, i), temporary_bucket);
 		}
-
+		return data;
 	}
 
 
@@ -116,7 +119,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 	{
 		int nodes_at_current_level = (int)(Math.pow(2, height_of_tree_L-level));
 		int total_nodes_at_current_level = 2*(leaf/nodes_at_current_level) + 1;
-		return (nodes_at_current_level*total_nodes_at_current_level) - 1;
+		return nodes_at_current_level*total_nodes_at_current_level - 1;
 	}
 
 

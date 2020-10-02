@@ -14,7 +14,7 @@ public class Bucket{
 	private static int max_size_Z = -1;
 
 	private ArrayList<Block> blocks_of_bucket;
-	private int current_size_of_bucket_Z;
+	protected int current_size_of_bucket_Z; // aaa
 	
 	Bucket()
 	{
@@ -42,6 +42,7 @@ public class Bucket{
 		{
 			blocks_of_bucket.add(new Block(other.getBlocks().get(i)));
 		}
+		current_size_of_bucket_Z = other.current_size_of_bucket_Z;
 
 	}
 
@@ -61,8 +62,8 @@ public class Bucket{
 
 	void addBlock(Block new_blk)
 	{
+		blocks_of_bucket.set(current_size_of_bucket_Z, new_blk);
 		current_size_of_bucket_Z++;
-		blocks_of_bucket.add(new_blk);
 	}
 
 
@@ -72,9 +73,10 @@ public class Bucket{
 		{
 			if(blocks_of_bucket.get(i).index == rm_blk.index)
 			{
-				current_size_of_bucket_Z--;
+
 				blocks_of_bucket.remove(i);
 				blocks_of_bucket.add(new Block()); // replace the one removed with a empty block
+				current_size_of_bucket_Z--;
 				return true;
 			}
 		}
