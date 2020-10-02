@@ -18,7 +18,7 @@ public class Job {
 		int num_blocks = (int) Math.pow(2, 20);
 		ArrayList<Integer> data_collection = new ArrayList<Integer>();
 
-		PrintWriter writer = new PrintWriter("simulation2.txt", "UTF-8");
+		//PrintWriter writer = new PrintWriter("simulation2.txt", "UTF-8");
 
 		//Set the Bucket size for all the buckets.
 		Bucket.setMaxSize(bucket_size);
@@ -46,7 +46,7 @@ public class Job {
 		}
 
 		// testing accessess by doing writes  - 100 million
-		for(int i = 0; i < 100000000; i++)
+		for(int i = 0; i < 1000000; i++)
 		{
 			oram.access(Operation.WRITE, i % num_blocks, write_bbuf);
 			int size_of_data = data_collection.size();
@@ -67,7 +67,8 @@ public class Job {
 		}
 
 		int size_of_data = data_collection.size();
-		writer.println(-1 + "," + 100000000);
+		//writer.println(-1 + "," + 1000000);
+        System.out.println(-1 + "," + 1000000);
 		for (int i=0; i<size_of_data; i++)
 		{
 			int counter = 0;
@@ -75,7 +76,8 @@ public class Job {
 			{
 				counter += data_collection.get(j);
 			}
-			writer.println(i + "," + counter);
+			//writer.println(i + "," + counter);
+            System.out.println(-1 + "," + counter);
 		}
 
 
